@@ -41,8 +41,10 @@ class StatisticsService implements IStatisticsService {
     @NotNull
     public Statistics getLastMinuteStatistics(Instant currentTime) {
         Instant maxTime = trunkTime(currentTime).minus(1, ChronoUnit.SECONDS);
+        Instant minTime = maxTime.minus(1, ChronoUnit.MINUTES);
         return lastMinuteStat.entrySet().stream()
                 .filter(e -> e.getKey().compareTo(maxTime) <= 0)
+                .filter(e -> e.getKey().compareTo(minTime) > 0)
                 .map(Map.Entry::getValue)
                 .reduce(new Statistics(), Statistics::merge);
     }
