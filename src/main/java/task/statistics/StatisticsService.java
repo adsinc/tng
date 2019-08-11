@@ -20,7 +20,10 @@ class StatisticsService implements IStatisticsService {
     }
 
     private Statistics computeStatistics(Statistics statistics, @NotNull Transaction transaction) {
-        return (statistics != null ? statistics : new Statistics()).update(transaction);
+        if (statistics != null) {
+            return statistics.update(transaction);
+        }
+        return new Statistics(transaction);
     }
 
     private void tryRemoveOldValues(Instant currentTime) {
