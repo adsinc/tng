@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
@@ -15,7 +16,7 @@ public class StatisticsServiceTest {
     private IStatisticsService statisticsService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         statisticsService = new StatisticsService();
     }
 
@@ -45,6 +46,28 @@ public class StatisticsServiceTest {
         assertEquals(createStatistics(2, 20, 10, 30), statisticsService.getLastMinuteStatistics(time));
         time = Instant.parse("2019-01-01T00:01:02.001Z");
         assertEquals(createStatistics(2, 30, 20, 50), statisticsService.getLastMinuteStatistics(time));
+    }
+
+    @Test
+    public void testConcurrentTransactions() {
+        Instant time = Instant.parse("2019-01-01T00:00:01.021Z");
+        int threadCount = 6;
+        int transactionPerThread = 10000;
+        CompletableFuture[] futures = IntStream.range(0, threadCount)
+                .mapToObj(i -> CompletableFuture.runAsync(() ->
+                        IntStream.range(0, transactionPerThread)
+                                .map(n -> transactionPerThread - n)
+                                .forEach(cnt -> {
+                                    Instant t = time.minus(cnt, ChronoUnit.MILLIS);
+                                    statisticsService.addTransaction(new Transaction(t.toEpochMilli(), i + 1), t);
+                                })
+                ))
+                .toArray(CompletableFuture[]::new);
+        CompletableFuture.allOf(futures).join();
+        assertEquals(
+                createStatistics(60000, 6, 1, 210000),
+                statisticsService.getLastMinuteStatistics(time.plus(1, ChronoUnit.SECONDS))
+        );
     }
 
     private Statistics createStatistics(int count, int max, int min, double sum) {
