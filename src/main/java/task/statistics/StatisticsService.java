@@ -5,14 +5,16 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 
 @Component
-public class StatisticsService {
+class StatisticsService implements IStatisticsService {
 
+    @Override
     public void addTransaction() {
 
     }
 
+    @Override
     @NotNull
-    public Statistics getStatistics(long currentTime){
+    public Statistics getLastMinuteStatistics(long currentTime) {
         return null;
     }
 }
