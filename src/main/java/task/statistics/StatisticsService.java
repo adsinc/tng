@@ -29,7 +29,7 @@ class StatisticsService implements IStatisticsService {
     private void tryRemoveOldValues(Instant currentTime) {
         Instant lastStoredTime = trunkTime(currentTime).minus(1, ChronoUnit.MINUTES);
         lastMinuteStat.keySet().stream()
-                .filter(time -> time.compareTo(lastStoredTime) <= 0)
+                .filter(time -> time.compareTo(lastStoredTime) < 0)
                 .forEach(lastMinuteStat::remove);
     }
 
