@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 class StatisticsService implements IStatisticsService {
 
     @Override
-    public void addTransaction() {
+    public void addTransaction(@NotNull Transaction transaction) {
 
     }
 

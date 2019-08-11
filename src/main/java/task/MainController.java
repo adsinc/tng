@@ -19,7 +19,7 @@ public class MainController {
 
     @PostMapping("/transactions")
     public ResponseEntity transactions(@RequestBody Transaction transaction) {
-        statisticsService.getLastMinuteStatistics(System.currentTimeMillis());
+        statisticsService.addTransaction(transaction);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
