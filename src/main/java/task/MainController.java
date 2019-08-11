@@ -11,6 +11,7 @@ import task.statistics.Statistics;
 import task.statistics.Transaction;
 
 import javax.annotation.Resource;
+import java.time.Instant;
 
 @RestController
 @SpringBootApplication
@@ -19,7 +20,7 @@ public class MainController {
 
     @PostMapping("/transactions")
     public ResponseEntity transactions(@RequestBody Transaction transaction) {
-        statisticsService.addTransaction(transaction);
+        statisticsService.addTransaction(transaction, Instant.now());
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
@@ -31,7 +32,7 @@ public class MainController {
     @GetMapping("/statistics")
     public ResponseEntity<Statistics> statistics() {
         return ResponseEntity.ok(
-                statisticsService.getLastMinuteStatistics(System.currentTimeMillis())
+                statisticsService.getLastMinuteStatistics(Instant.now())
         );
     }
 
