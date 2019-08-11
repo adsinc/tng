@@ -15,6 +15,9 @@ public class Statistics {
     long count;
 
     public double getAvg() {
+        if (count == 0) {
+            return 0;
+        }
         return sum / count;
     }
 
