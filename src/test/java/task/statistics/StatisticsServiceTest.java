@@ -55,8 +55,4 @@ public class StatisticsServiceTest {
         statistics.setSum(sum);
         return statistics;
     }
-
-    @Test
-    public void testGetLastMinuteStatistics() {
-    }
 }
